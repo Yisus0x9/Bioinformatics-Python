@@ -96,41 +96,17 @@ GENETIC_CODE = {
 
 def get_aa_by_codon(codon):
      return GENETIC_CODE.get(codon)
-def colored(seq):
-    bcolors={
-        'A':'\033[92m',
-        'C':'\033[94m',
-        'G':'\033[93m',
-        'T':'\033[91m',
-        'U':'\033[91m',
-        'reset':'\033[0;m'
-    }
-    tmpStr=""
-    for nuc in seq:
-        if nuc in bcolors:
-            tmpStr += bcolors[nuc] + nuc
-        else:
-            tmpStr += bcolors['reset'] + nuc
-    return tmpStr + bcolors['reset']
 
+def translate_rna_protein(sequence):
+    slice_index=3
+    protein=""
+    while slice_index<len(sequence):
+        codon=sequence[slice_index-3:slice_index]
+        translation=get_aa_by_codon(codon)
+        protein+=translation.abrev1
+        slice_index+=3
+    return protein
 
-def read_fasta(file_path):
-    with open(file_path, 'r') as file:
-        sequences = {}
-        current_id = None
-        current_sequence=""
-        for line in file:
-            print(line)
-            if line.startswith('>'):
-                if current_sequence!="" and current_id is not None:
-                    sequences[current_id]=current_sequence
-                    current_sequence=""
-                current_id= line.replace('>','').strip()
-                print(current_id)
-                
-            else:
-                current_sequence+=line.strip()   
-        if current_sequence!="" and current_id is not None:
-                    sequences[current_id]=current_sequence
-                    current_sequence=""
-        return sequences
+fopen = open("./datasets/rosalind_prot.txt","r")
+RNA_sequence = fopen.read()
+print(translate_rna_protein(RNA_sequence))
